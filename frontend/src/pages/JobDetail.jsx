@@ -20,6 +20,9 @@ import {
   Download,
   Trash2,
   AlertTriangle,
+  Camera,
+  X,
+  Image as ImageIcon,
 } from "lucide-react";
 
 const priorityColors = {
