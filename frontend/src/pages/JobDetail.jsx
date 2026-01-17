@@ -51,8 +51,10 @@ const JobDetail = () => {
   const [engineers, setEngineers] = useState([]);
   const [events, setEvents] = useState([]);
   const [completion, setCompletion] = useState(null);
+  const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notes, setNotes] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -60,16 +62,18 @@ const JobDetail = () => {
 
   const fetchData = async () => {
     try {
-      const [jobRes, engineersRes, eventsRes] = await Promise.all([
+      const [jobRes, engineersRes, eventsRes, photosRes] = await Promise.all([
         api.get(`/jobs/${id}`),
         api.get("/users/engineers"),
         api.get(`/jobs/${id}/events`),
+        api.get(`/jobs/${id}/photos`),
       ]);
 
       const jobData = jobRes.data;
       setJob(jobData);
       setEngineers(engineersRes.data);
       setEvents(eventsRes.data);
+      setPhotos(photosRes.data);
 
       // Fetch related data
       if (jobData.customer_id) {
@@ -99,6 +103,38 @@ const JobDetail = () => {
       navigate("/jobs");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    
+    try {
+      await api.post(`/jobs/${id}/photos`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      toast.success("Photo uploaded");
+      const photosRes = await api.get(`/jobs/${id}/photos`);
+      setPhotos(photosRes.data);
+    } catch (error) {
+      toast.error("Failed to upload photo");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handlePhotoDelete = async (photoId) => {
+    try {
+      await api.delete(`/jobs/${id}/photos/${photoId}`);
+      toast.success("Photo deleted");
+      setPhotos(photos.filter((p) => p.id !== photoId));
+    } catch (error) {
+      toast.error("Failed to delete photo");
     }
   };
 
