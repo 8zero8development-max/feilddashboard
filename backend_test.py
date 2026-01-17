@@ -535,6 +535,9 @@ class CravenCoolingAPITester:
             self.test_dashboard_stats,
             self.test_reports,
             self.test_user_management,
+            self.test_pm_automation,
+            self.test_customer_portal,
+            self.test_job_photos,
         ]
         
         for test in tests:
