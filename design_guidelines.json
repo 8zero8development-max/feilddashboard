@@ -1,0 +1,166 @@
+{
+  "identity": {
+    "persona": "E1 - The Anti-AI Designer",
+    "philosophy": "Fusion over Imitation. Emotion First. Content is King.",
+    "tone": "Professional, Industrial, Efficient, 'Cool' (Temperature-wise)",
+    "visual_style": "Clean lines, high data density for office, high contrast for mobile. Ice blue accents on dark charcoal."
+  },
+  "brand": {
+    "name": "Craven Cooling Services Ltd",
+    "logo_url": "https://customer-assets.emergentagent.com/job_coolflow-1/artifacts/jqw8kykt_craven-logo-DmU1mTeU.png",
+    "colors": {
+      "primary": {
+        "name": "Ice Blue",
+        "hex": "#06b6d4",
+        "tailwind": "cyan-500",
+        "usage": "Primary buttons, active states, key highlights"
+      },
+      "secondary": {
+        "name": "Deep Charcoal",
+        "hex": "#0f172a",
+        "tailwind": "slate-900",
+        "usage": "Sidebar, headers, dark mode background"
+      },
+      "accent": {
+        "name": "Warning Orange",
+        "hex": "#f97316",
+        "tailwind": "orange-500",
+        "usage": "Pending status, alerts"
+      },
+      "success": {
+        "name": "Operational Green",
+        "hex": "#10b981",
+        "tailwind": "emerald-500",
+        "usage": "Completed jobs, online status"
+      },
+      "destructive": {
+        "name": "Breakdown Red",
+        "hex": "#ef4444",
+        "tailwind": "red-500",
+        "usage": "Urgent jobs, delete actions, errors"
+      },
+      "background": {
+        "light": "#f8fafc",
+        "dark": "#020617"
+      },
+      "surface": {
+        "light": "#ffffff",
+        "dark": "#0f172a"
+      }
+    },
+    "typography": {
+      "headings": {
+        "family": "Barlow, sans-serif",
+        "weights": ["600", "700"],
+        "usage": "Page titles, card headers, modal titles. DO NOT use Inter."
+      },
+      "body": {
+        "family": "Inter, sans-serif",
+        "weights": ["400", "500"],
+        "usage": "General text, data tables, inputs"
+      },
+      "mono": {
+        "family": "JetBrains Mono, monospace",
+        "weights": ["400"],
+        "usage": "Serial numbers, asset tags, invoice IDs"
+      }
+    }
+  },
+  "layout": {
+    "spacing_system": "Generous. Use p-6 or p-8 for containers. Gap-4 or Gap-6 for grids.",
+    "grid_system": {
+      "dashboard": "Bento Grid: grid-cols-1 md:grid-cols-4 gap-6. Mix of col-span-1, col-span-2.",
+      "forms": "Max-width-2xl for readability. Two-column layout for dense data.",
+      "mobile": "Single column. Full width cards."
+    },
+    "sidebar": {
+      "width": "w-64",
+      "bg": "bg-slate-900",
+      "text": "text-slate-300",
+      "active_item": "bg-cyan-500/10 text-cyan-400 border-r-2 border-cyan-400"
+    },
+    "header": {
+      "height": "h-16",
+      "bg": "bg-white dark:bg-slate-900",
+      "border": "border-b border-slate-200 dark:border-slate-800"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-cyan-600 hover:bg-cyan-700 text-white shadow-sm rounded-md font-medium transition-all active:scale-95",
+      "secondary": "bg-slate-100 hover:bg-slate-200 text-slate-900 rounded-md font-medium",
+      "outline": "border-2 border-slate-200 hover:border-cyan-500 hover:text-cyan-600 bg-transparent rounded-md",
+      "ghost": "hover:bg-slate-100 text-slate-600 hover:text-slate-900 rounded-md"
+    },
+    "cards": {
+      "base": "bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow duration-200",
+      "header": "p-6 border-b border-slate-100 dark:border-slate-800",
+      "content": "p-6"
+    },
+    "inputs": {
+      "base": "h-10 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      "label": "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-2 block text-slate-700"
+    },
+    "status_badges": {
+      "base": "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+      "urgent": "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+      "pending": "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
+      "completed": "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200",
+      "info": "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+    }
+  },
+  "pages": {
+    "dashboard": {
+      "layout": "Sidebar + Header + Main Content Area",
+      "widgets": [
+        "Stats Overview (4 cards)",
+        "Urgent Jobs (List)",
+        "Engineer Map (Placeholder/Interactive)",
+        "Upcoming PMs (List)"
+      ]
+    },
+    "scheduler": {
+      "library": "react-big-calendar or similar custom grid",
+      "style": "Clean, white background, distinct colored blocks for jobs. Drag and drop visual cues."
+    },
+    "engineer_mobile": {
+      "layout": "Mobile-first. Bottom Navigation Bar.",
+      "features": "Large touch targets (min 44px). High contrast. Offline indicator.",
+      "job_card": "Prominent status, address, and 'Start Travel' button."
+    }
+  },
+  "assets": {
+    "images": {
+      "technician_working": "https://images.pexels.com/photos/5463576/pexels-photo-5463576.jpeg",
+      "rooftop_unit": "https://images.unsplash.com/photo-1558396376-beacad07c43e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxNzV8MHwxfHNlYXJjaHwzfHxjb21tZXJjaWFsJTIwcm9vZnRvcCUyMGh2YWMlMjB1bml0JTIwaW5kdXN0cmlhbHxlbnwwfHx8fDE3Njg2NjMwNjh8MA&ixlib=rb-4.1.0&q=85",
+      "tools_gauge": "https://images.unsplash.com/photo-1623601718212-6acc4ce46695?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwyfHxyZWZyaWdlcmF0aW9uJTIwZ2F1Z2VzJTIwYW5kJTIwdG9vbHN8ZW58MHx8fHwxNzY4NjYzMDcwfDA&ixlib=rb-4.1.0&q=85",
+      "logo": "https://customer-assets.emergentagent.com/job_coolflow-1/artifacts/jqw8kykt_craven-logo-DmU1mTeU.png"
+    },
+    "icons": "Lucide React (default). Use specific industrial icons: Wrench, Thermometer, Truck, Calendar, ClipboardCheck."
+  },
+  "tech_stack": {
+    "framework": "React",
+    "styling": "Tailwind CSS",
+    "ui_library": "Shadcn UI (Radix Primitives)",
+    "state_management": "React Context / Hooks",
+    "routing": "React Router"
+  },
+  "rules": {
+    "accessibility": {
+      "contrast": "Ensure text meets WCAG AA. Use slate-600+ on white.",
+      "focus": "Visible focus rings on all interactive elements (ring-2 ring-cyan-500).",
+      "aria": "Use aria-labels for icon-only buttons."
+    },
+    "testing": {
+      "attribute": "data-testid",
+      "format": "kebab-case (e.g., 'login-submit-btn', 'job-card-123')"
+    },
+    "anti_patterns": [
+      "Do not use pure black (#000000). Use Slate-950 or similar.",
+      "Do not use gradients for text unless it's a large hero title.",
+      "Do not center-align long text blocks.",
+      "Do not use transparent backgrounds for dropdowns or modals."
+    ]
+  },
+  "instructions_to_main_agent": "Follow the 'E1' persona. Build a professional, trade-focused tool. Prioritize data density in the office view and touch-friendliness in the mobile view. Use the provided image URLs for placeholders. Ensure all interactive elements have data-testid attributes. Use the 'Barlow' font for headings to give it that industrial look."
+}
