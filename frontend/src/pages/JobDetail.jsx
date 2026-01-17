@@ -358,6 +358,61 @@ const JobDetail = () => {
               </Card>
             </TabsContent>
 
+            <TabsContent value="photos" className="mt-4">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="mb-4">
+                    <label className="block">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handlePhotoUpload}
+                        disabled={uploading}
+                      />
+                      <Button variant="outline" className="w-full" asChild disabled={uploading}>
+                        <span>
+                          <Camera className="h-4 w-4 mr-2" />
+                          {uploading ? "Uploading..." : "Upload Photo"}
+                        </span>
+                      </Button>
+                    </label>
+                  </div>
+                  {photos.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {photos.map((photo) => (
+                        <div key={photo.id} className="relative group aspect-square rounded-lg overflow-hidden bg-slate-100">
+                          <img
+                            src={`${API}/photos/${photo.id}`}
+                            alt={photo.filename}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => handlePhotoDelete(photo.id)}
+                              data-testid={`delete-photo-${photo.id}`}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <p className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 truncate">
+                            {photo.filename}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-slate-500">
+                      <ImageIcon className="h-12 w-12 mx-auto mb-3 text-slate-300" />
+                      <p>No photos attached to this job</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             <TabsContent value="completion" className="mt-4">
               <Card>
                 <CardContent className="p-6">
