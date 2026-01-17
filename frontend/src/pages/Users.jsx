@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { toast } from "sonner";
-import { Plus, Search, Users, UserCog, Wrench, Phone } from "lucide-react";
+import { Plus, Search, Users as UsersIcon, UserCog, Wrench, Phone } from "lucide-react";
 
 const roleColors = {
   admin: "bg-purple-100 text-purple-800",
