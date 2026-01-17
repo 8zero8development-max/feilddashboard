@@ -709,4 +709,4 @@ export const CustomerPortalInvoices = () => {
   );
 };
 
-export default CustomerPortalLogin;
+// No default export - all exports are named
