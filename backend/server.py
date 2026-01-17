@@ -1293,6 +1293,360 @@ async def summarize_notes(data: dict, user: dict = Depends(get_current_user)):
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}
 
+# ============== PM Automation ==============
+
+@api_router.post("/pm/generate-jobs")
+async def generate_pm_jobs(user: dict = Depends(get_current_user)):
+    """Auto-generate PM jobs for assets that are due"""
+    now = datetime.now(timezone.utc)
+    
+    # Find assets with PM due
+    assets_due = await db.assets.find({"next_pm_due": {"$lte": now.isoformat()}}, {"_id": 0}).to_list(100)
+    
+    jobs_created = []
+    for asset in assets_due:
+        # Check if there's already an open PM job for this asset
+        existing_job = await db.jobs.find_one({
+            "asset_ids": asset["id"],
+            "job_type": "pm_service",
+            "status": {"$in": ["pending", "in_progress", "travelling"]}
+        })
+        
+        if existing_job:
+            continue  # Skip - already has an open PM job
+        
+        # Get site info
+        site = await db.sites.find_one({"id": asset.get("site_id")}, {"_id": 0})
+        if not site:
+            continue
+        
+        # Create PM job
+        job_id = str(uuid.uuid4())
+        job_number = await generate_job_number()
+        
+        job_doc = {
+            "id": job_id,
+            "job_number": job_number,
+            "customer_id": site.get("customer_id"),
+            "site_id": asset.get("site_id"),
+            "asset_ids": [asset["id"]],
+            "job_type": "pm_service",
+            "priority": "medium",
+            "status": "pending",
+            "description": f"Scheduled PM Service for {asset.get('name')} - {asset.get('make', '')} {asset.get('model', '')}",
+            "assigned_engineer_id": None,
+            "scheduled_date": None,
+            "scheduled_time": None,
+            "estimated_duration": 60,
+            "sla_hours": None,
+            "created_at": now.isoformat(),
+            "updated_at": now.isoformat(),
+            "created_by": "system",
+            "auto_generated": True
+        }
+        
+        await db.jobs.insert_one(job_doc)
+        jobs_created.append({"job_number": job_number, "asset": asset.get("name")})
+        
+        # Log event
+        await db.job_events.insert_one({
+            "id": str(uuid.uuid4()),
+            "job_id": job_id,
+            "event_type": "auto_generated",
+            "user_id": "system",
+            "timestamp": now.isoformat(),
+            "details": {"reason": "PM due", "asset_id": asset["id"]}
+        })
+    
+    return {"jobs_created": len(jobs_created), "details": jobs_created}
+
+@api_router.get("/pm/status")
+async def get_pm_status(user: dict = Depends(get_current_user)):
+    """Get PM automation status and upcoming PMs"""
+    now = datetime.now(timezone.utc)
+    next_week = (now + timedelta(days=7)).isoformat()
+    next_month = (now + timedelta(days=30)).isoformat()
+    
+    overdue = await db.assets.count_documents({"next_pm_due": {"$lte": now.isoformat()}})
+    due_this_week = await db.assets.count_documents({
+        "next_pm_due": {"$gt": now.isoformat(), "$lte": next_week}
+    })
+    due_this_month = await db.assets.count_documents({
+        "next_pm_due": {"$gt": next_week, "$lte": next_month}
+    })
+    
+    return {
+        "overdue": overdue,
+        "due_this_week": due_this_week,
+        "due_this_month": due_this_month,
+        "last_check": now.isoformat()
+    }
+
+# ============== Customer Portal ==============
+
+class CustomerPortalLogin(BaseModel):
+    email: EmailStr
+    access_code: str
+
+class CustomerPortalCreate(BaseModel):
+    customer_id: str
+    email: EmailStr
+    contact_name: str
+
+@api_router.post("/portal/create-access")
+async def create_customer_portal_access(data: CustomerPortalCreate, user: dict = Depends(get_current_user)):
+    """Create portal access for a customer"""
+    customer = await db.customers.find_one({"id": data.customer_id}, {"_id": 0})
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    
+    # Generate access code
+    access_code = str(uuid.uuid4())[:8].upper()
+    
+    portal_doc = {
+        "id": str(uuid.uuid4()),
+        "customer_id": data.customer_id,
+        "email": data.email,
+        "contact_name": data.contact_name,
+        "access_code_hash": hash_password(access_code),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "last_login": None,
+        "active": True
+    }
+    
+    await db.customer_portal.insert_one(portal_doc)
+    
+    return {
+        "message": "Portal access created",
+        "email": data.email,
+        "access_code": access_code,  # Show only once
+        "customer_name": customer.get("company_name")
+    }
+
+@api_router.post("/portal/login")
+async def customer_portal_login(data: CustomerPortalLogin):
+    """Customer portal login"""
+    portal_user = await db.customer_portal.find_one({"email": data.email, "active": True}, {"_id": 0})
+    if not portal_user or not verify_password(data.access_code, portal_user["access_code_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    # Update last login
+    await db.customer_portal.update_one(
+        {"id": portal_user["id"]},
+        {"$set": {"last_login": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    # Create portal token
+    payload = {
+        "sub": portal_user["id"],
+        "customer_id": portal_user["customer_id"],
+        "type": "portal",
+        "exp": datetime.now(timezone.utc) + timedelta(hours=24)
+    }
+    token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+    customer = await db.customers.find_one({"id": portal_user["customer_id"]}, {"_id": 0})
+    
+    return {
+        "token": token,
+        "customer_name": customer.get("company_name") if customer else "Unknown",
+        "contact_name": portal_user.get("contact_name")
+    }
+
+async def get_portal_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Verify portal token"""
+    try:
+        payload = jwt.decode(credentials.credentials, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        if payload.get("type") != "portal":
+            raise HTTPException(status_code=401, detail="Invalid portal token")
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+@api_router.get("/portal/dashboard")
+async def portal_dashboard(portal: dict = Depends(get_portal_user)):
+    """Customer portal dashboard"""
+    customer_id = portal["customer_id"]
+    
+    customer = await db.customers.find_one({"id": customer_id}, {"_id": 0})
+    sites = await db.sites.find({"customer_id": customer_id}, {"_id": 0}).to_list(100)
+    site_ids = [s["id"] for s in sites]
+    
+    # Get assets for all sites
+    assets = await db.assets.find({"site_id": {"$in": site_ids}}, {"_id": 0}).to_list(100)
+    
+    # Get jobs stats
+    total_jobs = await db.jobs.count_documents({"customer_id": customer_id})
+    completed_jobs = await db.jobs.count_documents({"customer_id": customer_id, "status": "completed"})
+    pending_jobs = await db.jobs.count_documents({"customer_id": customer_id, "status": {"$in": ["pending", "in_progress"]}})
+    
+    # PM due
+    now = datetime.now(timezone.utc).isoformat()
+    pm_due_assets = [a for a in assets if a.get("next_pm_due") and a["next_pm_due"] <= now]
+    
+    return {
+        "customer": customer,
+        "sites_count": len(sites),
+        "assets_count": len(assets),
+        "total_jobs": total_jobs,
+        "completed_jobs": completed_jobs,
+        "pending_jobs": pending_jobs,
+        "pm_due_count": len(pm_due_assets)
+    }
+
+@api_router.get("/portal/sites")
+async def portal_get_sites(portal: dict = Depends(get_portal_user)):
+    """Get customer's sites"""
+    sites = await db.sites.find({"customer_id": portal["customer_id"]}, {"_id": 0}).to_list(100)
+    return sites
+
+@api_router.get("/portal/assets")
+async def portal_get_assets(portal: dict = Depends(get_portal_user)):
+    """Get customer's assets with PM status"""
+    sites = await db.sites.find({"customer_id": portal["customer_id"]}, {"_id": 0, "id": 1}).to_list(100)
+    site_ids = [s["id"] for s in sites]
+    
+    assets = await db.assets.find({"site_id": {"$in": site_ids}}, {"_id": 0}).to_list(100)
+    
+    # Enrich with site info
+    for asset in assets:
+        site = await db.sites.find_one({"id": asset.get("site_id")}, {"_id": 0, "name": 1, "address": 1})
+        asset["site"] = site
+    
+    return assets
+
+@api_router.get("/portal/service-history")
+async def portal_service_history(portal: dict = Depends(get_portal_user)):
+    """Get customer's service history"""
+    jobs = await db.jobs.find(
+        {"customer_id": portal["customer_id"], "status": "completed"},
+        {"_id": 0}
+    ).sort("updated_at", -1).to_list(100)
+    
+    # Enrich with site info
+    for job in jobs:
+        site = await db.sites.find_one({"id": job.get("site_id")}, {"_id": 0, "name": 1})
+        job["site"] = site
+        
+        # Get completion notes if available
+        completion = await db.job_completions.find_one({"job_id": job["id"]}, {"_id": 0, "engineer_notes": 1})
+        job["completion_notes"] = completion.get("engineer_notes") if completion else None
+    
+    return jobs
+
+@api_router.get("/portal/upcoming-pm")
+async def portal_upcoming_pm(portal: dict = Depends(get_portal_user)):
+    """Get upcoming PM schedules"""
+    sites = await db.sites.find({"customer_id": portal["customer_id"]}, {"_id": 0, "id": 1}).to_list(100)
+    site_ids = [s["id"] for s in sites]
+    
+    # Get all assets sorted by next_pm_due
+    assets = await db.assets.find(
+        {"site_id": {"$in": site_ids}, "next_pm_due": {"$ne": None}},
+        {"_id": 0}
+    ).sort("next_pm_due", 1).to_list(100)
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    result = []
+    for asset in assets:
+        site = await db.sites.find_one({"id": asset.get("site_id")}, {"_id": 0, "name": 1})
+        is_overdue = asset.get("next_pm_due", "") <= now
+        result.append({
+            "asset_id": asset["id"],
+            "asset_name": asset.get("name"),
+            "make_model": f"{asset.get('make', '')} {asset.get('model', '')}".strip(),
+            "site_name": site.get("name") if site else "Unknown",
+            "next_pm_due": asset.get("next_pm_due"),
+            "pm_interval_months": asset.get("pm_interval_months"),
+            "is_overdue": is_overdue
+        })
+    
+    return result
+
+@api_router.get("/portal/invoices")
+async def portal_get_invoices(portal: dict = Depends(get_portal_user)):
+    """Get customer's invoices"""
+    invoices = await db.invoices.find(
+        {"customer_id": portal["customer_id"]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    return invoices
+
+# ============== Job Photos ==============
+
+@api_router.post("/jobs/{job_id}/photos")
+async def upload_job_photo(job_id: str, file: UploadFile = File(...), user: dict = Depends(get_current_user)):
+    """Upload a photo to a job"""
+    job = await db.jobs.find_one({"id": job_id})
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    
+    file_id = str(uuid.uuid4())
+    file_ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+    file_path = UPLOAD_DIR / f"{file_id}.{file_ext}"
+    
+    async with aiofiles.open(file_path, "wb") as f:
+        content = await file.read()
+        await f.write(content)
+    
+    photo_doc = {
+        "id": file_id,
+        "job_id": job_id,
+        "filename": file.filename,
+        "path": str(file_path),
+        "uploaded_by": user["id"],
+        "uploaded_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.job_photos.insert_one(photo_doc)
+    
+    return {"id": file_id, "filename": file.filename}
+
+@api_router.get("/jobs/{job_id}/photos")
+async def get_job_photos(job_id: str, user: dict = Depends(get_current_user)):
+    """Get all photos for a job"""
+    photos = await db.job_photos.find({"job_id": job_id}, {"_id": 0}).to_list(100)
+    return photos
+
+@api_router.delete("/jobs/{job_id}/photos/{photo_id}")
+async def delete_job_photo(job_id: str, photo_id: str, user: dict = Depends(get_current_user)):
+    """Delete a job photo"""
+    photo = await db.job_photos.find_one({"id": photo_id, "job_id": job_id}, {"_id": 0})
+    if not photo:
+        raise HTTPException(status_code=404, detail="Photo not found")
+    
+    # Delete file
+    file_path = Path(photo["path"])
+    if file_path.exists():
+        file_path.unlink()
+    
+    await db.job_photos.delete_one({"id": photo_id})
+    return {"message": "Photo deleted"}
+
+# ============== Portal Access Management ==============
+
+@api_router.get("/portal/access-list")
+async def get_portal_access_list(user: dict = Depends(get_current_user)):
+    """Get all portal access entries"""
+    portal_users = await db.customer_portal.find({}, {"_id": 0, "access_code_hash": 0}).to_list(100)
+    
+    # Enrich with customer names
+    for pu in portal_users:
+        customer = await db.customers.find_one({"id": pu.get("customer_id")}, {"_id": 0, "company_name": 1})
+        pu["customer_name"] = customer.get("company_name") if customer else "Unknown"
+    
+    return portal_users
+
+@api_router.delete("/portal/access/{access_id}")
+async def revoke_portal_access(access_id: str, user: dict = Depends(get_current_user)):
+    """Revoke portal access"""
+    result = await db.customer_portal.delete_one({"id": access_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Access not found")
+    return {"message": "Portal access revoked"}
+
 # Include router
 app.include_router(api_router)
 
