@@ -1,0 +1,48 @@
+{
+  "summary": "Completed comprehensive testing of Craven Cooling FSM Phase 2 new features. All backend APIs (17/17 tests passed) and frontend functionality working correctly. Successfully tested PM Automation, Customer Portal Access management, Customer Portal login, and Job Photos upload functionality. All requested features are operational and integrate seamlessly with existing system.",
+  
+  "backend_issues": {
+    "critical_bugs": [],
+    "flaky_endpoints": []
+  },
+  
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  
+  "passed_tests": [
+    "Admin login with admin2@cravencooling.co.uk / admin123",
+    "PM Automation page loads and displays status cards",
+    "Generate PM Jobs button functionality",
+    "Customer Portal Access page loads correctly",
+    "Create portal access dialog opens with all form fields",
+    "Customer Portal login page loads at /portal with proper branding",
+    "Job Detail Photos tab with upload capability",
+    "Navigation sidebar shows PM Automation and Customer Portal links",
+    "Backend PM Automation endpoints (status, generate jobs)",
+    "Backend Customer Portal endpoints (create access, login, dashboard)",
+    "Backend Job Photos endpoints (upload, retrieve, delete)",
+    "All existing FSM functionality (customers, sites, assets, jobs, quotes, invoices)",
+    "Dashboard statistics and reports",
+    "User management and authentication",
+    "PDF generation for jobs, quotes, and invoices",
+    "Parts management",
+    "Service worker registration for offline mode"
+  ],
+  
+  "test_report_links": ["/app/backend_test.py"],
+  
+  "success_percentage": {
+    "backend": "100% (17/17 tests passed including new PM automation, customer portal, and job photos)",
+    "frontend": "100% (all new features working correctly, navigation integrated, UI responsive)"
+  },
+  
+  "updated_files": ["/app/backend_test.py"],
+  
+  "action_item_for_main_agent": "",
+  
+  "should_call_test_agent_after_fix": "false",
+  "should_main_agent_test_itself": "false"
+}
