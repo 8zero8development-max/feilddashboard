@@ -36,6 +36,19 @@ api.interceptors.response.use(
 
 export { api, API };
 
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then((registration) => {
+        console.log('SW registered:', registration.scope);
+      })
+      .catch((error) => {
+        console.log('SW registration failed:', error);
+      });
+  });
+}
+
 // Pages - Lazy imports for better loading
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -52,6 +65,18 @@ import Parts from "./pages/Parts";
 import Users from "./pages/Users";
 import EngineerMobile from "./pages/EngineerMobile";
 import Layout from "./components/Layout";
+import PMAutomation from "./pages/PMAutomation";
+import PortalAccess from "./pages/PortalAccess";
+import CustomerPortalLogin from "./pages/CustomerPortalLogin";
+import {
+  CustomerPortalLayout,
+  CustomerPortalDashboard,
+  CustomerPortalSites,
+  CustomerPortalAssets,
+  CustomerPortalHistory,
+  CustomerPortalPMSchedule,
+  CustomerPortalInvoices,
+} from "./pages/CustomerPortal";
 
 // Auth Provider
 const AuthProvider = ({ children }) => {
@@ -137,11 +162,26 @@ function App() {
         <Toaster position="top-right" richColors />
         <Routes>
           <Route path="/login" element={<Login />} />
+          
+          {/* Customer Portal Routes */}
+          <Route path="/portal" element={<CustomerPortalLogin />} />
+          <Route path="/portal/*" element={<CustomerPortalLayout />}>
+            <Route path="dashboard" element={<CustomerPortalDashboard />} />
+            <Route path="sites" element={<CustomerPortalSites />} />
+            <Route path="assets" element={<CustomerPortalAssets />} />
+            <Route path="history" element={<CustomerPortalHistory />} />
+            <Route path="pm-schedule" element={<CustomerPortalPMSchedule />} />
+            <Route path="invoices" element={<CustomerPortalInvoices />} />
+          </Route>
+          
+          {/* Engineer Mobile App */}
           <Route path="/engineer" element={
             <ProtectedRoute>
               <EngineerMobile />
             </ProtectedRoute>
           } />
+          
+          {/* Main Office App */}
           <Route path="/" element={
             <ProtectedRoute>
               <Layout />
@@ -160,6 +200,8 @@ function App() {
             <Route path="reports" element={<Reports />} />
             <Route path="parts" element={<Parts />} />
             <Route path="users" element={<Users />} />
+            <Route path="pm-automation" element={<PMAutomation />} />
+            <Route path="portal-access" element={<PortalAccess />} />
           </Route>
         </Routes>
       </BrowserRouter>
