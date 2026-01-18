@@ -70,6 +70,6 @@ HOST = "0.0.0.0"
 
 [deployment]
 deploymentTarget = "autoscale"
-build = ["bash", "-c", "cd frontend && yarn build"]
+build = ["bash", "-c", "cd frontend && REACT_APP_BACKEND_URL='' yarn build"]
 publicDir = "frontend/build"
 run = ["bash", "-c", "cd backend && uvicorn server:app --host 0.0.0.0 --port 5000"]
