@@ -1,4 +1,4 @@
-from .auth import (
+from services.auth import (
     hash_password, 
     verify_password, 
     create_token, 
@@ -6,12 +6,12 @@ from .auth import (
     get_portal_user,
     security
 )
-from .pdf import (
+from services.pdf import (
     generate_quote_pdf_content,
     generate_invoice_pdf_content,
     generate_job_pdf_content
 )
-from .ai import summarize_notes
+from services.ai import summarize_notes
 
 __all__ = [
     "hash_password", "verify_password", "create_token", 

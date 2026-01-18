@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from datetime import datetime, timezone, timedelta
 
-from ..database import supabase
-from ..services.auth import get_current_user
+from database import supabase
+from services.auth import get_current_user
 
 router = APIRouter(tags=["reports"])
 

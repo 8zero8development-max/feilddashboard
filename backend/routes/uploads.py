@@ -6,9 +6,9 @@ from datetime import datetime, timezone
 import aiofiles
 from pathlib import Path
 
-from ..database import supabase
-from ..services.auth import get_current_user
-from ..config import UPLOAD_DIR
+from database import supabase
+from services.auth import get_current_user
+from config import UPLOAD_DIR
 
 router = APIRouter(prefix="/upload", tags=["uploads"])
 

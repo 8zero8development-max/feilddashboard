@@ -3,9 +3,9 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
 
-from ..database import supabase
-from ..models.customer import SiteCreate, SiteResponse
-from ..services.auth import get_current_user
+from database import supabase
+from models.customer import SiteCreate, SiteResponse
+from services.auth import get_current_user
 
 router = APIRouter(prefix="/sites", tags=["sites"])
 

@@ -3,9 +3,9 @@ from typing import List
 import uuid
 from datetime import datetime, timezone
 
-from ..database import supabase
-from ..models.invoice import PartCreate, PartResponse
-from ..services.auth import get_current_user
+from database import supabase
+from models.invoice import PartCreate, PartResponse
+from services.auth import get_current_user
 
 router = APIRouter(prefix="/parts", tags=["parts"])
 

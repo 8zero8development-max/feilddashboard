@@ -4,10 +4,10 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
 
-from ..database import supabase
-from ..models.invoice import InvoiceCreate, InvoiceResponse
-from ..services.auth import get_current_user
-from ..services.pdf import generate_invoice_pdf_content
+from database import supabase
+from models.invoice import InvoiceCreate, InvoiceResponse
+from services.auth import get_current_user
+from services.pdf import generate_invoice_pdf_content
 
 router = APIRouter(prefix="/invoices", tags=["invoices"])
 

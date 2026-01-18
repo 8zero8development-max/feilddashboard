@@ -4,9 +4,9 @@ from datetime import datetime, timezone, timedelta
 import uuid
 import jwt
 
-from ..database import supabase
-from ..services.auth import hash_password, verify_password, get_current_user, get_portal_user
-from ..config import JWT_SECRET, JWT_ALGORITHM
+from database import supabase
+from services.auth import hash_password, verify_password, get_current_user, get_portal_user
+from config import JWT_SECRET, JWT_ALGORITHM
 
 router = APIRouter(prefix="/portal", tags=["portal"])
 

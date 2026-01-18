@@ -1,8 +1,8 @@
-from .auth import UserCreate, UserLogin, UserResponse
-from .customer import CustomerCreate, CustomerResponse, SiteCreate, SiteResponse
-from .asset import AssetCreate, AssetResponse
-from .job import JobCreate, JobUpdate, JobResponse, ChecklistItemCreate, JobCompletionCreate
-from .invoice import QuoteCreate, QuoteResponse, InvoiceCreate, InvoiceResponse, PartCreate, PartResponse
+from models.auth import UserCreate, UserLogin, UserResponse
+from models.customer import CustomerCreate, CustomerResponse, SiteCreate, SiteResponse
+from models.asset import AssetCreate, AssetResponse
+from models.job import JobCreate, JobUpdate, JobResponse, ChecklistItemCreate, JobCompletionCreate
+from models.invoice import QuoteCreate, QuoteResponse, InvoiceCreate, InvoiceResponse, PartCreate, PartResponse
 
 __all__ = [
     "UserCreate", "UserLogin", "UserResponse",

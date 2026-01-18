@@ -4,10 +4,10 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
 
-from ..database import supabase
-from ..models.invoice import QuoteCreate, QuoteResponse
-from ..services.auth import get_current_user
-from ..services.pdf import generate_quote_pdf_content
+from database import supabase
+from models.invoice import QuoteCreate, QuoteResponse
+from services.auth import get_current_user
+from services.pdf import generate_quote_pdf_content
 
 router = APIRouter(prefix="/quotes", tags=["quotes"])
 

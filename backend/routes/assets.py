@@ -3,9 +3,9 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
 
-from ..database import supabase
-from ..models.asset import AssetCreate, AssetResponse
-from ..services.auth import get_current_user
+from database import supabase
+from models.asset import AssetCreate, AssetResponse
+from services.auth import get_current_user
 
 router = APIRouter(prefix="/assets", tags=["assets"])
 

@@ -4,8 +4,8 @@ from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from ..config import JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRATION_HOURS
-from ..database import supabase
+from config import JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRATION_HOURS
+from database import supabase
 
 security = HTTPBearer()
 

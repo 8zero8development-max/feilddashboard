@@ -6,11 +6,11 @@ import os
 import logging
 from datetime import datetime, timezone
 
-from .config import FRONTEND_BUILD_DIR
-from .database import supabase
-from .services.auth import get_current_user
-from .services.ai import summarize_notes
-from .routes import (
+from config import FRONTEND_BUILD_DIR
+from database import supabase
+from services.auth import get_current_user
+from services.ai import summarize_notes
+from routes import (
     auth_router,
     users_router,
     customers_router,

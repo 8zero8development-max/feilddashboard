@@ -6,11 +6,11 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import aiofiles
 
-from ..database import supabase
-from ..models.job import JobCreate, JobUpdate, JobResponse, JobCompletionCreate
-from ..services.auth import get_current_user
-from ..services.pdf import generate_job_pdf_content
-from ..config import UPLOAD_DIR
+from database import supabase
+from models.job import JobCreate, JobUpdate, JobResponse, JobCompletionCreate
+from services.auth import get_current_user
+from services.pdf import generate_job_pdf_content
+from config import UPLOAD_DIR
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
