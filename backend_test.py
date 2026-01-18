@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import uuid
 
 class CravenCoolingAPITester:
-    def __init__(self, base_url="https://coolflow-1.preview.emergentagent.com/api"):
+    def __init__(self, base_url="http://localhost:8001/api"):
         self.base_url = base_url
         self.token = None
         self.user_id = None

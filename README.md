@@ -231,7 +231,3 @@ yarn start
 ## License
 
 Proprietary - Craven Cooling Services Ltd
-
----
-
-Built with ❄️ by Emergent
