@@ -1,0 +1,19 @@
+{
+  "name": "field-service-management",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install": "cd frontend && yarn install --frozen-lockfile",
+    "prebuild": "cd frontend && echo \"REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL:-http://localhost:8000}\" > .env",
+    "build": "cd frontend && yarn build",
+    "start": "cd frontend && yarn start",
+    "postinstall": "cd frontend && yarn install --frozen-lockfile"
+  },
+  "workspaces": [
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
