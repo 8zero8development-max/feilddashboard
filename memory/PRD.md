@@ -50,16 +50,17 @@ Build a Field Service Management system for refrigeration/HVAC businesses with t
 - ✅ **Offline Mode**: Service worker for caching, offline.html fallback page
 - ✅ **Photo Upload/Display**: Job photos endpoint, upload in job detail page
 - ✅ **PM Automation**: Auto-generate PM jobs for overdue assets, status dashboard
-- ✅ **Customer Portal**: 
+- ✅ **Customer Portal**:
   - Separate login with access codes
   - Dashboard with service overview
   - Sites and Assets views
   - Service history with engineer notes
   - Upcoming PM schedule
   - Invoices list
+- ✅ **Database Migration**: Migrated from MongoDB to Supabase (PostgreSQL) for better scalability and features
 
 ## Tech Stack
-- Backend: FastAPI + MongoDB + Motor
+- Backend: FastAPI + Supabase (PostgreSQL)
 - Frontend: React 19 + TailwindCSS + shadcn/ui
 - Auth: JWT with bcrypt (separate tokens for staff vs customer portal)
 - PDF: ReportLab
