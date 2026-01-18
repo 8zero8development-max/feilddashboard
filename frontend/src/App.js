@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from
 import axios from "axios";
 import { Toaster } from "./components/ui/sonner";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { QueryClientProvider } from "@tanstack/react-query";
+import queryClient from "./lib/queryClient";
+import { initSyncManager } from "./lib/syncManager";
 
 // Context
 const AuthContext = createContext(null);
@@ -64,7 +67,7 @@ import Invoices from "./pages/Invoices";
 import Reports from "./pages/Reports";
 import Parts from "./pages/Parts";
 import Users from "./pages/Users";
-import EngineerMobile from "./pages/EngineerMobile";
+import { EngineerLayout, JobsList, JobSheet } from "./pages/engineer";
 import Layout from "./components/Layout";
 import PMAutomation from "./pages/PMAutomation";
 import PortalAccess from "./pages/PortalAccess";
@@ -156,59 +159,67 @@ const useIsMobile = () => {
   return isMobile;
 };
 
+initSyncManager();
+
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="craven-theme">
-      <AuthProvider>
-        <BrowserRouter>
-          <Toaster position="top-right" richColors />
-          <Routes>
-          <Route path="/login" element={<Login />} />
-          
-          {/* Customer Portal Routes */}
-          <Route path="/portal" element={<CustomerPortalLogin />} />
-          <Route path="/portal/*" element={<CustomerPortalLayout />}>
-            <Route path="dashboard" element={<CustomerPortalDashboard />} />
-            <Route path="sites" element={<CustomerPortalSites />} />
-            <Route path="assets" element={<CustomerPortalAssets />} />
-            <Route path="history" element={<CustomerPortalHistory />} />
-            <Route path="pm-schedule" element={<CustomerPortalPMSchedule />} />
-            <Route path="invoices" element={<CustomerPortalInvoices />} />
-          </Route>
-          
-          {/* Engineer Mobile App */}
-          <Route path="/engineer" element={
-            <ProtectedRoute>
-              <EngineerMobile />
-            </ProtectedRoute>
-          } />
-          
-          {/* Main Office App */}
-          <Route path="/" element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<Dashboard />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="jobs" element={<Jobs />} />
-            <Route path="jobs/:id" element={<JobDetail />} />
-            <Route path="customers" element={<Customers />} />
-            <Route path="sites" element={<Sites />} />
-            <Route path="assets" element={<Assets />} />
-            <Route path="scheduler" element={<Scheduler />} />
-            <Route path="quotes" element={<Quotes />} />
-            <Route path="invoices" element={<Invoices />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="parts" element={<Parts />} />
-            <Route path="users" element={<Users />} />
-            <Route path="pm-automation" element={<PMAutomation />} />
-            <Route path="portal-access" element={<PortalAccess />} />
-          </Route>
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="craven-theme">
+        <AuthProvider>
+          <BrowserRouter>
+            <Toaster position="top-right" richColors />
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              
+              {/* Customer Portal Routes */}
+              <Route path="/portal" element={<CustomerPortalLogin />} />
+              <Route path="/portal/*" element={<CustomerPortalLayout />}>
+                <Route path="dashboard" element={<CustomerPortalDashboard />} />
+                <Route path="sites" element={<CustomerPortalSites />} />
+                <Route path="assets" element={<CustomerPortalAssets />} />
+                <Route path="history" element={<CustomerPortalHistory />} />
+                <Route path="pm-schedule" element={<CustomerPortalPMSchedule />} />
+                <Route path="invoices" element={<CustomerPortalInvoices />} />
+              </Route>
+              
+              {/* Engineer Mobile App */}
+              <Route path="/engineer" element={
+                <ProtectedRoute>
+                  <EngineerLayout />
+                </ProtectedRoute>
+              }>
+                <Route index element={<Navigate to="/engineer/jobs" replace />} />
+                <Route path="jobs" element={<JobsList />} />
+                <Route path="jobs/:jobId" element={<JobSheet />} />
+              </Route>
+              
+              {/* Main Office App */}
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }>
+                <Route index element={<Dashboard />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="jobs" element={<Jobs />} />
+                <Route path="jobs/:id" element={<JobDetail />} />
+                <Route path="customers" element={<Customers />} />
+                <Route path="sites" element={<Sites />} />
+                <Route path="assets" element={<Assets />} />
+                <Route path="scheduler" element={<Scheduler />} />
+                <Route path="quotes" element={<Quotes />} />
+                <Route path="invoices" element={<Invoices />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="parts" element={<Parts />} />
+                <Route path="users" element={<Users />} />
+                <Route path="pm-automation" element={<PMAutomation />} />
+                <Route path="portal-access" element={<PortalAccess />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 
