@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
+import { useTheme } from "./ThemeProvider";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { Avatar, AvatarFallback } from "./ui/avatar";
@@ -12,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetContent } from "./ui/sheet";
 import {
   LayoutDashboard,
   Wrench,
@@ -31,6 +32,8 @@ import {
   Smartphone,
   RefreshCw,
   Key,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 const navItems = [
@@ -53,10 +56,10 @@ const NavLink = ({ item, isActive, onClick }) => (
   <Link
     to={item.path}
     onClick={onClick}
-    className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all ${
+    className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
       isActive
-        ? "bg-cyan-500/10 text-cyan-400 border-r-2 border-cyan-400"
-        : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+        ? "bg-primary/10 text-primary border-r-2 border-primary shadow-sm"
+        : "text-muted-foreground hover:text-foreground hover:bg-muted"
     }`}
     data-testid={`nav-${item.name.toLowerCase()}`}
   >
@@ -69,21 +72,19 @@ const Sidebar = ({ onNavClick }) => {
   const location = useLocation();
 
   return (
-    <div className="flex flex-col h-full bg-slate-900">
-      {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-800">
+    <div className="flex flex-col h-full bg-card border-r border-border">
+      <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
         <img
           src="https://customer-assets.emergentagent.com/job_coolflow-1/artifacts/jqw8kykt_craven-logo-DmU1mTeU.png"
           alt="Craven Cooling"
           className="h-10 w-10"
         />
         <div>
-          <h1 className="text-lg font-bold text-white heading">Craven Cooling</h1>
-          <p className="text-xs text-slate-500">Field Service</p>
+          <h1 className="text-lg font-bold text-foreground heading">Craven Cooling</h1>
+          <p className="text-xs text-muted-foreground">Field Service</p>
         </div>
       </div>
 
-      {/* Navigation */}
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="space-y-1">
           {navItems.map((item) => (
@@ -97,11 +98,10 @@ const Sidebar = ({ onNavClick }) => {
         </nav>
       </ScrollArea>
 
-      {/* Engineer App Link */}
-      <div className="px-3 py-4 border-t border-slate-800">
+      <div className="px-3 py-4 border-t border-border">
         <Link
           to="/engineer"
-          className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-cyan-400 bg-cyan-500/10 rounded-lg hover:bg-cyan-500/20 transition-all"
+          className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-all duration-200"
           data-testid="nav-engineer-app"
         >
           <Smartphone className="h-5 w-5" />
@@ -113,9 +113,31 @@ const Sidebar = ({ onNavClick }) => {
   );
 };
 
+const ThemeToggle = () => {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={toggleTheme}
+      className="h-10 w-10 rounded-full transition-all duration-300 hover:bg-muted"
+      data-testid="theme-toggle"
+    >
+      {theme === "dark" ? (
+        <Sun className="h-5 w-5 text-amber-500 transition-transform duration-300 rotate-0 scale-100" />
+      ) : (
+        <Moon className="h-5 w-5 text-slate-700 transition-transform duration-300 rotate-0 scale-100" />
+      )}
+      <span className="sr-only">Toggle theme</span>
+    </Button>
+  );
+};
+
 const Layout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
@@ -133,24 +155,19 @@ const Layout = () => {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50">
-      {/* Desktop Sidebar */}
+    <div className="flex h-screen bg-background">
       <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 z-50">
         <Sidebar />
       </aside>
 
-      {/* Mobile Sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="p-0 w-64 bg-slate-900 border-slate-800">
+        <SheetContent side="left" className="p-0 w-64 bg-card border-border">
           <Sidebar onNavClick={() => setSidebarOpen(false)} />
         </SheetContent>
       </Sheet>
 
-      {/* Main Content */}
       <div className="flex flex-col flex-1 lg:pl-64">
-        {/* Header */}
-        <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-slate-200 bg-white px-4 lg:px-6">
-          {/* Mobile Menu Button */}
+        <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 px-4 lg:px-6 shadow-sm">
           <Button
             variant="ghost"
             size="icon"
@@ -161,19 +178,19 @@ const Layout = () => {
             <Menu className="h-6 w-6" />
           </Button>
 
-          {/* Page Title - Dynamic based on route */}
           <div className="flex-1">
-            <h2 className="text-lg font-semibold text-slate-900 heading" data-testid="page-title">
+            <h2 className="text-lg font-semibold text-foreground heading" data-testid="page-title">
               {navItems.find((item) => location.pathname.startsWith(item.path))?.name || "Dashboard"}
             </h2>
           </div>
 
-          {/* User Menu */}
+          <ThemeToggle />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full" data-testid="user-menu-btn">
-                <Avatar className="h-10 w-10 bg-cyan-600">
-                  <AvatarFallback className="bg-cyan-600 text-white">
+                <Avatar className="h-10 w-10 bg-primary">
+                  <AvatarFallback className="bg-primary text-primary-foreground font-medium">
                     {user?.name ? getInitials(user.name) : "U"}
                   </AvatarFallback>
                 </Avatar>
@@ -182,13 +199,13 @@ const Layout = () => {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">{user?.name}</p>
-                  <p className="text-xs text-slate-500">{user?.email}</p>
-                  <p className="text-xs text-cyan-600 capitalize">{user?.role}</p>
+                  <p className="text-sm font-medium text-foreground">{user?.name}</p>
+                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  <p className="text-xs text-primary capitalize font-medium">{user?.role}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600" data-testid="logout-btn">
+              <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive" data-testid="logout-btn">
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
               </DropdownMenuItem>
@@ -196,8 +213,7 @@ const Layout = () => {
           </DropdownMenu>
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-background">
           <Outlet />
         </main>
       </div>

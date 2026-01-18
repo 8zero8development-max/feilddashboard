@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
+import { useTheme } from "../components/ThemeProvider";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -8,11 +9,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { toast } from "sonner";
-import { Snowflake } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
   const { login, register } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
 
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
@@ -55,9 +57,22 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleTheme}
+        className="absolute top-4 right-4 h-10 w-10 rounded-full"
+        data-testid="login-theme-toggle"
+      >
+        {theme === "dark" ? (
+          <Sun className="h-5 w-5 text-amber-500" />
+        ) : (
+          <Moon className="h-5 w-5 text-slate-700" />
+        )}
+      </Button>
+
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <img
             src="https://customer-assets.emergentagent.com/job_coolflow-1/artifacts/jqw8kykt_craven-logo-DmU1mTeU.png"
@@ -65,28 +80,28 @@ const Login = () => {
             className="h-20 w-20 mb-4"
             data-testid="login-logo"
           />
-          <h1 className="text-2xl font-bold text-white heading">Craven Cooling Services</h1>
-          <p className="text-slate-400 text-sm mt-1">Field Service Management</p>
+          <h1 className="text-2xl font-bold text-foreground heading">Craven Cooling Services</h1>
+          <p className="text-muted-foreground text-sm mt-1">Field Service Management</p>
         </div>
 
-        <Card className="border-slate-800 bg-slate-800/50 backdrop-blur">
+        <Card className="border-border bg-card/80 backdrop-blur-sm shadow-lg">
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-slate-700/50">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login" data-testid="login-tab">Sign In</TabsTrigger>
               <TabsTrigger value="register" data-testid="register-tab">Register</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
               <CardHeader>
-                <CardTitle className="text-white">Welcome Back</CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardTitle className="text-foreground">Welcome Back</CardTitle>
+                <CardDescription>
                   Sign in to your account to continue
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-slate-300">Email</Label>
+                    <Label htmlFor="email">Email</Label>
                     <Input
                       id="email"
                       type="email"
@@ -94,12 +109,11 @@ const Login = () => {
                       value={loginForm.email}
                       onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                       required
-                      className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
                       data-testid="login-email-input"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-slate-300">Password</Label>
+                    <Label htmlFor="password">Password</Label>
                     <Input
                       id="password"
                       type="password"
@@ -107,13 +121,12 @@ const Login = () => {
                       value={loginForm.password}
                       onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                       required
-                      className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
                       data-testid="login-password-input"
                     />
                   </div>
                   <Button
                     type="submit"
-                    className="w-full bg-cyan-600 hover:bg-cyan-700 text-white"
+                    className="w-full"
                     disabled={isLoading}
                     data-testid="login-submit-btn"
                   >
@@ -125,15 +138,15 @@ const Login = () => {
 
             <TabsContent value="register">
               <CardHeader>
-                <CardTitle className="text-white">Create Account</CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardTitle className="text-foreground">Create Account</CardTitle>
+                <CardDescription>
                   Register a new account to get started
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="reg-name" className="text-slate-300">Full Name</Label>
+                    <Label htmlFor="reg-name">Full Name</Label>
                     <Input
                       id="reg-name"
                       type="text"
@@ -141,12 +154,11 @@ const Login = () => {
                       value={registerForm.name}
                       onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
                       required
-                      className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
                       data-testid="register-name-input"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reg-email" className="text-slate-300">Email</Label>
+                    <Label htmlFor="reg-email">Email</Label>
                     <Input
                       id="reg-email"
                       type="email"
@@ -154,12 +166,11 @@ const Login = () => {
                       value={registerForm.email}
                       onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
                       required
-                      className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
                       data-testid="register-email-input"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reg-password" className="text-slate-300">Password</Label>
+                    <Label htmlFor="reg-password">Password</Label>
                     <Input
                       id="reg-password"
                       type="password"
@@ -167,29 +178,28 @@ const Login = () => {
                       value={registerForm.password}
                       onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
                       required
-                      className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
                       data-testid="register-password-input"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reg-role" className="text-slate-300">Role</Label>
+                    <Label htmlFor="reg-role">Role</Label>
                     <Select
                       value={registerForm.role}
                       onValueChange={(value) => setRegisterForm({ ...registerForm, role: value })}
                     >
-                      <SelectTrigger className="bg-slate-700 border-slate-600 text-white" data-testid="register-role-select">
+                      <SelectTrigger data-testid="register-role-select">
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-800 border-slate-700">
-                        <SelectItem value="admin" className="text-white hover:bg-slate-700">Admin / Owner</SelectItem>
-                        <SelectItem value="dispatcher" className="text-white hover:bg-slate-700">Dispatcher / Office</SelectItem>
-                        <SelectItem value="engineer" className="text-white hover:bg-slate-700">Engineer</SelectItem>
+                      <SelectContent>
+                        <SelectItem value="admin">Admin / Owner</SelectItem>
+                        <SelectItem value="dispatcher">Dispatcher / Office</SelectItem>
+                        <SelectItem value="engineer">Engineer</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <Button
                     type="submit"
-                    className="w-full bg-cyan-600 hover:bg-cyan-700 text-white"
+                    className="w-full"
                     disabled={isLoading}
                     data-testid="register-submit-btn"
                   >
@@ -201,7 +211,7 @@ const Login = () => {
           </Tabs>
         </Card>
 
-        <p className="text-center text-slate-500 text-sm mt-6">
+        <p className="text-center text-muted-foreground text-sm mt-6">
           © {new Date().getFullYear()} Craven Cooling Services Ltd
         </p>
       </div>

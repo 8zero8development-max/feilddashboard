@@ -33,7 +33,26 @@ cd backend && uvicorn server:app --host localhost --port 8000
 ## Deployment
 The project is configured for static deployment. The frontend builds to `frontend/build/`.
 
+## Theming
+The application supports dark and light modes with a toggle button:
+- Theme preference is stored in localStorage under the key `craven-theme`
+- Default theme is dark mode
+- Toggle button available on login page (top-right) and in main layout header
+- Uses CSS variables via Tailwind for consistent theming across all components
+
 ## Recent Changes
+- January 18, 2026: Added dark/light theme support
+  - Created ThemeProvider component for theme state management
+  - Added theme toggle to Layout and Login pages
+  - Updated CSS with dark mode variants for badges, scrollbars, and calendar
+  - Added smooth transitions for theme switching
+  - Modernized styling with glassmorphism effects and better shadows
+
+- January 18, 2026: Fixed deployment configuration
+  - Converted backend from relative to absolute imports for uvicorn compatibility
+  - Configured autoscale deployment with backend serving frontend static files
+  - Set up API proxy for development environment
+
 - January 18, 2026: Initial setup in Replit environment
   - Configured CRACO to allow all hosts for Replit proxy
   - Set frontend to run on 0.0.0.0:5000
