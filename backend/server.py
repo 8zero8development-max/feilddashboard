@@ -1263,26 +1263,25 @@ async def summarize_notes(data: dict, user: dict = Depends(get_current_user)):
     notes = data.get("notes", "")
     provider = data.get("provider", "openai")  # openai or gemini
     
-    api_key = os.environ.get("EMERGENT_LLM_KEY")
+    api_key = os.environ.get("OPENAI_API_KEY") if provider == "openai" else os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         raise HTTPException(status_code=400, detail="AI key not configured")
     
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        import litellm
         
-        chat = LlmChat(
-            api_key=api_key,
-            session_id=f"summarize-{uuid.uuid4()}",
-            system_message="You are an assistant for a refrigeration/HVAC field service company. Summarize job notes concisely."
+        model = "gemini/gemini-1.5-flash" if provider == "gemini" else "gpt-4o-mini"
+        
+        response = await litellm.acompletion(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are an assistant for a refrigeration/HVAC field service company. Summarize job notes concisely."},
+                {"role": "user", "content": f"Summarize these job notes:\n\n{notes}"}
+            ],
+            api_key=api_key
         )
         
-        if provider == "gemini":
-            chat.with_model("gemini", "gemini-3-flash-preview")
-        else:
-            chat.with_model("openai", "gpt-5.2")
-        
-        response = await chat.send_message(UserMessage(text=f"Summarize these job notes:\n\n{notes}"))
-        return {"summary": response}
+        return {"summary": response.choices[0].message.content}
     except Exception as e:
         logger.error(f"AI summarization error: {e}")
         raise HTTPException(status_code=500, detail="AI service error")
