@@ -56,6 +56,16 @@ const webpackConfig = {
 };
 
 webpackConfig.devServer = (devServerConfig) => {
+  // Allow all hosts for Replit proxy
+  devServerConfig.allowedHosts = 'all';
+  devServerConfig.host = '0.0.0.0';
+  devServerConfig.port = 5000;
+
+  // Apply visual edits dev server setup only if enabled
+  if (config.enableVisualEdits && setupDevServer) {
+    devServerConfig = setupDevServer(devServerConfig);
+  }
+
   // Add health check endpoints if enabled
   if (config.enableHealthCheck && setupHealthEndpoints && healthPluginInstance) {
     const originalSetupMiddlewares = devServerConfig.setupMiddlewares;
