@@ -88,52 +88,65 @@ code, .mono {
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Light mode */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: hsl(var(--muted));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: hsl(var(--muted-foreground) / 0.3);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: hsl(var(--muted-foreground) / 0.5);
 }
 
-/* Status badge colors */
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Status badge colors - with dark mode support */
 .badge-urgent {
-  @apply bg-red-100 text-red-800;
+  @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400;
 }
 
 .badge-high {
-  @apply bg-orange-100 text-orange-800;
+  @apply bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400;
 }
 
 .badge-medium {
-  @apply bg-blue-100 text-blue-800;
+  @apply bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400;
 }
 
 .badge-low {
-  @apply bg-slate-100 text-slate-800;
+  @apply bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-400;
 }
 
 .badge-pending {
-  @apply bg-amber-100 text-amber-800;
+  @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400;
 }
 
 .badge-in-progress {
-  @apply bg-cyan-100 text-cyan-800;
+  @apply bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400;
 }
 
 .badge-completed {
-  @apply bg-emerald-100 text-emerald-800;
+  @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400;
 }
 
 /* Button active state */
@@ -143,12 +156,27 @@ code, .mono {
 
 /* Sidebar active state */
 .sidebar-item-active {
-  @apply bg-cyan-500/10 text-cyan-400 border-r-2 border-cyan-400;
+  @apply bg-primary/10 text-primary border-r-2 border-primary;
 }
 
 /* Table hover */
 .table-row-hover:hover {
-  @apply bg-slate-50;
+  @apply bg-muted;
+}
+
+/* Modern glass effect for cards */
+.glass-card {
+  @apply bg-card/80 backdrop-blur-sm border border-border shadow-lg;
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.1s ease-in-out;
+}
+
+/* Better focus states */
+*:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
 }
 
 /* Calendar customizations */
@@ -157,23 +185,41 @@ code, .mono {
 }
 
 .rbc-event {
-  @apply bg-cyan-600 border-none rounded-md;
+  @apply bg-primary border-none rounded-md;
 }
 
 .rbc-event.rbc-selected {
-  @apply bg-cyan-700;
+  @apply bg-primary/80;
 }
 
 .rbc-today {
-  @apply bg-cyan-50;
+  @apply bg-primary/10;
 }
 
 .rbc-toolbar button {
-  @apply text-slate-700 hover:bg-slate-100 rounded-md;
+  @apply text-foreground hover:bg-muted rounded-md;
 }
 
 .rbc-toolbar button.rbc-active {
-  @apply bg-cyan-600 text-white;
+  @apply bg-primary text-primary-foreground;
+}
+
+.dark .rbc-off-range-bg {
+  @apply bg-muted/50;
+}
+
+.dark .rbc-header {
+  @apply border-border;
+}
+
+.dark .rbc-month-view,
+.dark .rbc-time-view {
+  @apply border-border;
+}
+
+.dark .rbc-day-bg + .rbc-day-bg,
+.dark .rbc-month-row + .rbc-month-row {
+  @apply border-border;
 }
 
 /* Mobile touch targets */

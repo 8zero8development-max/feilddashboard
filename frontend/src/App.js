@@ -2,6 +2,7 @@ import { useState, useEffect, createContext, useContext } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Toaster } from "./components/ui/sonner";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 // Context
 const AuthContext = createContext(null);
@@ -157,10 +158,11 @@ const useIsMobile = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Toaster position="top-right" richColors />
-        <Routes>
+    <ThemeProvider defaultTheme="dark" storageKey="craven-theme">
+      <AuthProvider>
+        <BrowserRouter>
+          <Toaster position="top-right" richColors />
+          <Routes>
           <Route path="/login" element={<Login />} />
           
           {/* Customer Portal Routes */}
@@ -203,9 +205,10 @@ function App() {
             <Route path="pm-automation" element={<PMAutomation />} />
             <Route path="portal-access" element={<PortalAccess />} />
           </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
