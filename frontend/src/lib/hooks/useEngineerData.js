@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../../App';
+import { api } from '../api';
 import { 
   db, 
   seedDatabase, 

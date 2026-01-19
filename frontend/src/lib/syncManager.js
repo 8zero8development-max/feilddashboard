@@ -1,4 +1,4 @@
-import { api } from '../App';
+import { api } from './api';
 import { 
   db, 
   getPendingMutations, 
