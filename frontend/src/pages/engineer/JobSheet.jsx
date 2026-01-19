@@ -50,11 +50,19 @@ export default function JobSheet() {
   const [partsUsed, setPartsUsed] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [showSignature, setShowSignature] = useState(false);
+  const [fgasData, setFgasData] = useState({
+    refrigerant_added: "",
+    refrigerant_recovered: "",
+    leak_test_result: "",
+    test_method: "",
+    technician_certification: "",
+  });
 
   const job = jobs?.find((j) => j.id === jobId);
   const customer = lookups?.customers?.find((c) => c.id === job?.customer_id);
   const site = lookups?.sites?.find((s) => s.id === job?.site_id);
   const jobAssets = lookups?.assets?.filter((a) => job?.asset_ids?.includes(a.id)) || [];
+  const hasFgasAssets = jobAssets.some((a) => a.refrigerant_type && a.refrigerant_charge);
 
   useEffect(() => {
     if (draft) {
@@ -236,6 +244,9 @@ export default function JobSheet() {
             setPhotos={setPhotos}
             onPhotoCapture={handlePhotoCapture}
             onComplete={handleComplete}
+            fgasData={fgasData}
+            setFgasData={setFgasData}
+            showFgasSection={hasFgasAssets}
           />
         </TabsContent>
       </Tabs>

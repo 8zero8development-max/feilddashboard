@@ -34,6 +34,11 @@ const Assets = () => {
     refrigerant_charge: "",
     pm_interval_months: 6,
     notes: "",
+    fgas_category: "",
+    fgas_co2_equivalent: "",
+    fgas_certified_technician: "",
+    fgas_leak_check_interval: 12,
+    fgas_notes: "",
   });
 
   useEffect(() => {
@@ -91,6 +96,11 @@ const Assets = () => {
       refrigerant_charge: asset.refrigerant_charge,
       pm_interval_months: asset.pm_interval_months,
       notes: asset.notes,
+      fgas_category: asset.fgas_category || "",
+      fgas_co2_equivalent: asset.fgas_co2_equivalent || "",
+      fgas_certified_technician: asset.fgas_certified_technician || "",
+      fgas_leak_check_interval: asset.fgas_leak_check_interval || 12,
+      fgas_notes: asset.fgas_notes || "",
     });
     setDialogOpen(true);
   };
@@ -121,6 +131,11 @@ const Assets = () => {
       refrigerant_charge: "",
       pm_interval_months: 6,
       notes: "",
+      fgas_category: "",
+      fgas_co2_equivalent: "",
+      fgas_certified_technician: "",
+      fgas_leak_check_interval: 12,
+      fgas_notes: "",
     });
   };
 
@@ -301,6 +316,71 @@ const Assets = () => {
                   onChange={(e) => setForm({ ...form, notes: e.target.value })}
                   placeholder="Any additional notes about this asset..."
                 />
+              </div>
+
+              <div className="border-t pt-4 mt-4">
+                <h3 className="text-sm font-semibold text-slate-700 mb-3">F-Gas Compliance</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>F-Gas Category</Label>
+                    <Select value={form.fgas_category || "none"} onValueChange={(v) => setForm({ ...form, fgas_category: v === "none" ? "" : v })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Not Applicable</SelectItem>
+                        <SelectItem value="1">Category 1 (5+ tonnes CO2e)</SelectItem>
+                        <SelectItem value="2">Category 2 (50+ tonnes CO2e)</SelectItem>
+                        <SelectItem value="3">Category 3 (500+ tonnes CO2e)</SelectItem>
+                        <SelectItem value="4">Category 4 (Hermetically sealed)</SelectItem>
+                        <SelectItem value="5">Category 5 (Fire protection)</SelectItem>
+                        <SelectItem value="6">Category 6 (Electrical switchgear)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>CO2 Equivalent (tonnes)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={form.fgas_co2_equivalent}
+                      onChange={(e) => setForm({ ...form, fgas_co2_equivalent: e.target.value })}
+                      placeholder="e.g., 2.5"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Leak Check Interval (months)</Label>
+                    <Select value={form.fgas_leak_check_interval?.toString()} onValueChange={(v) => setForm({ ...form, fgas_leak_check_interval: parseInt(v) })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="3">3 months</SelectItem>
+                        <SelectItem value="6">6 months</SelectItem>
+                        <SelectItem value="12">12 months</SelectItem>
+                        <SelectItem value="24">24 months</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div className="space-y-2">
+                    <Label>Certified Technician</Label>
+                    <Input
+                      value={form.fgas_certified_technician}
+                      onChange={(e) => setForm({ ...form, fgas_certified_technician: e.target.value })}
+                      placeholder="Certification number"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>F-Gas Notes</Label>
+                    <Input
+                      value={form.fgas_notes}
+                      onChange={(e) => setForm({ ...form, fgas_notes: e.target.value })}
+                      placeholder="F-Gas specific notes..."
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="flex justify-end gap-3 pt-4">

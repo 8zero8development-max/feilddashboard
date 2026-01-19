@@ -23,11 +23,21 @@ async def create_asset(data: AssetCreate, user: dict = Depends(get_current_user)
         except ValueError:
             pass
     
+    fgas_next_leak_check_due = None
+    if data.install_date and data.fgas_leak_check_interval:
+        try:
+            install = datetime.fromisoformat(data.install_date.replace('Z', '+00:00'))
+            fgas_next_leak_check_due = (install + timedelta(days=data.fgas_leak_check_interval * 30)).isoformat()
+        except ValueError:
+            pass
+    
     doc = {
         "id": asset_id,
         **data.model_dump(),
         "last_service_date": None,
         "next_pm_due": next_pm_due,
+        "fgas_last_leak_check": None,
+        "fgas_next_leak_check_due": fgas_next_leak_check_due,
         "created_at": now.isoformat()
     }
     supabase.table('assets').insert(doc).execute()
