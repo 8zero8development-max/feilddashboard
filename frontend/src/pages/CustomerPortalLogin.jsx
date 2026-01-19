@@ -41,7 +41,7 @@ const CustomerPortalLogin = () => {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <img
-            src="https://customer-assets.emergentagent.com/job_coolflow-1/artifacts/jqw8kykt_craven-logo-DmU1mTeU.png"
+            src="/craven-logo.png"
             alt="Craven Cooling Services"
             className="h-20 w-20 mb-4"
           />

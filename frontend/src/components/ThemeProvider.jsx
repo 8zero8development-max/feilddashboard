@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 const ThemeContext = createContext({
-  theme: "dark",
+  theme: "light",
   setTheme: () => null,
   toggleTheme: () => null,
 });
@@ -14,7 +14,7 @@ export const useTheme = () => {
   return context;
 };
 
-export function ThemeProvider({ children, defaultTheme = "dark", storageKey = "craven-theme" }) {
+export function ThemeProvider({ children, defaultTheme = "light", storageKey = "craven-theme" }) {
   const [theme, setTheme] = useState(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem(storageKey);

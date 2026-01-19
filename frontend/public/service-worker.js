@@ -294,8 +294,8 @@ self.addEventListener('push', (event) => {
   
   const options = {
     body: data.body || 'New notification',
-    icon: 'https://customer-assets.emergentagent.com/job_coolflow-1/artifacts/jqw8kykt_craven-logo-DmU1mTeU.png',
-    badge: 'https://customer-assets.emergentagent.com/job_coolflow-1/artifacts/jqw8kykt_craven-logo-DmU1mTeU.png',
+    icon: '/craven-logo.png',
+    badge: '/craven-logo.png',
     data: data.url || '/engineer',
     vibrate: [100, 50, 100],
     actions: [

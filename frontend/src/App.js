@@ -25,6 +25,7 @@ import { EngineerLayout, JobsList, JobSheet } from "./pages/engineer";
 import Layout from "./components/Layout";
 import PMAutomation from "./pages/PMAutomation";
 import PortalAccess from "./pages/PortalAccess";
+import Help from "./pages/Help";
 import CustomerPortalLogin from "./pages/CustomerPortalLogin";
 import {
   CustomerPortalLayout,
@@ -34,6 +35,7 @@ import {
   CustomerPortalHistory,
   CustomerPortalPMSchedule,
   CustomerPortalInvoices,
+  CustomerPortalApprovals,
 } from "./pages/CustomerPortal";
 
 // Context
@@ -178,12 +180,13 @@ function App() {
               <Route path="/portal" element={<CustomerPortalLogin />} />
               <Route path="/portal/*" element={<CustomerPortalLayout />}>
                 <Route path="dashboard" element={<CustomerPortalDashboard />} />
-                <Route path="sites" element={<CustomerPortalSites />} />
-                <Route path="assets" element={<CustomerPortalAssets />} />
-                <Route path="history" element={<CustomerPortalHistory />} />
-                <Route path="pm-schedule" element={<CustomerPortalPMSchedule />} />
-                <Route path="invoices" element={<CustomerPortalInvoices />} />
-              </Route>
+                              <Route path="sites" element={<CustomerPortalSites />} />
+                              <Route path="assets" element={<CustomerPortalAssets />} />
+                              <Route path="history" element={<CustomerPortalHistory />} />
+                              <Route path="pm-schedule" element={<CustomerPortalPMSchedule />} />
+                              <Route path="invoices" element={<CustomerPortalInvoices />} />
+                              <Route path="approvals" element={<CustomerPortalApprovals />} />
+                            </Route>
               
               {/* Engineer Mobile App */}
               <Route path="/engineer" element={
@@ -217,6 +220,7 @@ function App() {
                 <Route path="users" element={<Users />} />
                 <Route path="pm-automation" element={<PMAutomation />} />
                 <Route path="portal-access" element={<PortalAccess />} />
+                <Route path="help" element={<Help />} />
               </Route>
             </Routes>
           </BrowserRouter>

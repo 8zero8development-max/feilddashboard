@@ -254,7 +254,7 @@ const EngineerMobile = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img
-              src="https://customer-assets.emergentagent.com/job_coolflow-1/artifacts/jqw8kykt_craven-logo-DmU1mTeU.png"
+              src="/craven-logo.png"
               alt="Craven"
               className="h-8 w-8"
             />
