@@ -75,7 +75,7 @@ const Sidebar = ({ onNavClick }) => {
     <div className="flex flex-col h-full bg-card border-r border-border">
       <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
         <img
-          src="https://customer-assets.emergentagent.com/job_coolflow-1/artifacts/jqw8kykt_craven-logo-DmU1mTeU.png"
+          src="/craven-logo.png"
           alt="Craven Cooling"
           className="h-10 w-10"
         />
