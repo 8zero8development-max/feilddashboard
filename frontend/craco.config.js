@@ -32,6 +32,18 @@ const webpackConfig = {
       '@': path.resolve(__dirname, 'src'),
     },
     configure: (webpackConfig) => {
+      // Force all React imports to resolve to the same instance
+      // This prevents "Cannot read properties of null (reading 'useEffect')" errors
+      // caused by duplicate React instances in production builds
+      webpackConfig.resolve = webpackConfig.resolve || {};
+      webpackConfig.resolve.alias = webpackConfig.resolve.alias || {};
+      webpackConfig.resolve.alias['react'] = path.resolve(__dirname, 'node_modules/react');
+      webpackConfig.resolve.alias['react-dom'] = path.resolve(__dirname, 'node_modules/react-dom');
+
+      // Remove ModuleScopePlugin to allow the React alias to work
+      webpackConfig.resolve.plugins = webpackConfig.resolve.plugins.filter(
+        (plugin) => plugin.constructor.name !== 'ModuleScopePlugin'
+      );
 
       // Add ignored patterns to reduce watched directories
         webpackConfig.watchOptions = {
