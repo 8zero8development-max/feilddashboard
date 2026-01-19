@@ -54,3 +54,26 @@ async def get_portal_user(credentials: HTTPAuthorizationCredentials = Depends(se
         raise HTTPException(status_code=401, detail="Token expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+
+async def get_user_from_token_param(token: str = None):
+    """
+    Authenticate user from a token query parameter.
+    Used for PDF downloads where Authorization header cannot be set (e.g., window.open()).
+    """
+    if not token:
+        raise HTTPException(status_code=401, detail="Authorization required")
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        response = supabase.table('users').select('*').eq('id', user_id).execute()
+        if not response.data:
+            raise HTTPException(status_code=401, detail="User not found")
+        user = response.data[0]
+        return user
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")

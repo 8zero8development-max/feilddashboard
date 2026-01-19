@@ -3,7 +3,8 @@ import { Button } from "../../../../components/ui/button";
 import { Input } from "../../../../components/ui/input";
 import { Label } from "../../../../components/ui/label";
 import { Textarea } from "../../../../components/ui/textarea";
-import { Clock, Camera, PenTool, CheckCircle2, X } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select";
+import { Clock, Camera, PenTool, CheckCircle2, X, Snowflake } from "lucide-react";
 
 export default function CompletionTab({
   engineerNotes,
@@ -16,6 +17,9 @@ export default function CompletionTab({
   setPhotos,
   onPhotoCapture,
   onComplete,
+  fgasData,
+  setFgasData,
+  showFgasSection = false,
 }) {
   const handleRemovePhoto = (index) => {
     setPhotos(photos.filter((_, idx) => idx !== index));
@@ -114,6 +118,89 @@ export default function CompletionTab({
           />
         </CardContent>
       </Card>
+
+      {showFgasSection && fgasData && setFgasData && (
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Snowflake className="h-5 w-5 text-cyan-400" />
+              F-Gas Compliance
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-slate-400">Refrigerant Added (kg)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={fgasData.refrigerant_added || ""}
+                  onChange={(e) => setFgasData({ ...fgasData, refrigerant_added: e.target.value })}
+                  className="bg-slate-700 border-slate-600"
+                  placeholder="0.00"
+                />
+              </div>
+              <div>
+                <Label className="text-slate-400">Refrigerant Recovered (kg)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={fgasData.refrigerant_recovered || ""}
+                  onChange={(e) => setFgasData({ ...fgasData, refrigerant_recovered: e.target.value })}
+                  className="bg-slate-700 border-slate-600"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-slate-400">Leak Test Result</Label>
+                <Select 
+                  value={fgasData.leak_test_result || "none"} 
+                  onValueChange={(v) => setFgasData({ ...fgasData, leak_test_result: v === "none" ? "" : v })}
+                >
+                  <SelectTrigger className="bg-slate-700 border-slate-600">
+                    <SelectValue placeholder="Select result" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Not Tested</SelectItem>
+                    <SelectItem value="pass">Pass</SelectItem>
+                    <SelectItem value="fail">Fail</SelectItem>
+                    <SelectItem value="minor_leak">Minor Leak</SelectItem>
+                    <SelectItem value="major_leak">Major Leak</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-slate-400">Test Method</Label>
+                <Select 
+                  value={fgasData.test_method || "none"} 
+                  onValueChange={(v) => setFgasData({ ...fgasData, test_method: v === "none" ? "" : v })}
+                >
+                  <SelectTrigger className="bg-slate-700 border-slate-600">
+                    <SelectValue placeholder="Select method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="pressure_test">Pressure Test</SelectItem>
+                    <SelectItem value="bubble_test">Bubble Test</SelectItem>
+                    <SelectItem value="electronic_detector">Electronic Detector</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div>
+              <Label className="text-slate-400">Technician Certification</Label>
+              <Input
+                value={fgasData.technician_certification || ""}
+                onChange={(e) => setFgasData({ ...fgasData, technician_certification: e.target.value })}
+                className="bg-slate-700 border-slate-600"
+                placeholder="Certification number"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Button
         className="w-full h-14 bg-emerald-600 hover:bg-emerald-700 text-lg"

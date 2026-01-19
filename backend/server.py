@@ -26,6 +26,7 @@ from routes import (
     reports_router,
     pm_router,
     portal_router,
+    fgas_router,
 )
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -49,6 +50,7 @@ api_router.include_router(photos_router)
 api_router.include_router(reports_router)
 api_router.include_router(pm_router)
 api_router.include_router(portal_router)
+api_router.include_router(fgas_router)
 
 
 @api_router.post("/ai/summarize-notes")

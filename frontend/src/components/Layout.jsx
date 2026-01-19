@@ -35,6 +35,7 @@ import {
   Sun,
   Moon,
   HelpCircle,
+  Snowflake,
 } from "lucide-react";
 
 const navItems = [
@@ -44,6 +45,7 @@ const navItems = [
   { name: "Customers", path: "/customers", icon: Users },
   { name: "Sites", path: "/sites", icon: MapPin },
   { name: "Assets", path: "/assets", icon: Thermometer },
+  { name: "F-Gas Compliance", path: "/fgas-compliance", icon: Snowflake },
   { name: "Quotes", path: "/quotes", icon: FileText },
   { name: "Invoices", path: "/invoices", icon: Receipt },
   { name: "Reports", path: "/reports", icon: BarChart3 },

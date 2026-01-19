@@ -10,6 +10,7 @@ from routes.uploads import router as uploads_router, photos_router
 from routes.reports import router as reports_router
 from routes.pm import router as pm_router
 from routes.portal import router as portal_router
+from routes.fgas import router as fgas_router
 
 __all__ = [
     "auth_router", "users_router",
@@ -24,4 +25,5 @@ __all__ = [
     "reports_router",
     "pm_router",
     "portal_router",
+    "fgas_router",
 ]
