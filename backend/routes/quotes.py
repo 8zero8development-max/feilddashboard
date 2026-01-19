@@ -6,7 +6,7 @@ from datetime import datetime, timezone, timedelta
 
 from database import supabase
 from models.invoice import QuoteCreate, QuoteResponse
-from services.auth import get_current_user
+from services.auth import get_current_user, get_user_from_token_param
 from services.pdf import generate_quote_pdf_content
 
 router = APIRouter(prefix="/quotes", tags=["quotes"])
@@ -79,7 +79,7 @@ async def delete_quote(quote_id: str, user: dict = Depends(get_current_user)):
 
 
 @router.get("/{quote_id}/pdf")
-async def generate_quote_pdf(quote_id: str, user: dict = Depends(get_current_user)):
+async def generate_quote_pdf(quote_id: str, user: dict = Depends(get_user_from_token_param)):
     quote_response = supabase.table('quotes').select('*').eq('id', quote_id).execute()
     if not quote_response.data:
         raise HTTPException(status_code=404, detail="Quote not found")

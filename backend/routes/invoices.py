@@ -6,7 +6,7 @@ from datetime import datetime, timezone, timedelta
 
 from database import supabase
 from models.invoice import InvoiceCreate, InvoiceResponse
-from services.auth import get_current_user
+from services.auth import get_current_user, get_user_from_token_param
 from services.pdf import generate_invoice_pdf_content
 
 router = APIRouter(prefix="/invoices", tags=["invoices"])
@@ -79,7 +79,7 @@ async def delete_invoice(invoice_id: str, user: dict = Depends(get_current_user)
 
 
 @router.get("/{invoice_id}/pdf")
-async def generate_invoice_pdf(invoice_id: str, user: dict = Depends(get_current_user)):
+async def generate_invoice_pdf(invoice_id: str, user: dict = Depends(get_user_from_token_param)):
     invoice_response = supabase.table('invoices').select('*').eq('id', invoice_id).execute()
     if not invoice_response.data:
         raise HTTPException(status_code=404, detail="Invoice not found")
